@@ -30,6 +30,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="launchGallery"
             android:text="@string/photosBtn" />
 
         <Button
@@ -37,6 +38,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="launchGallery"
             android:text="@string/slideshowBtn" />
     </LinearLayout>
 

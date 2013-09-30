@@ -1,10 +1,12 @@
 package com.ITCS4180.photogallery;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
+import android.widget.TextView;
 
 public class PhotoActivity extends Activity {
 
@@ -14,6 +16,18 @@ public class PhotoActivity extends Activity {
 		setContentView(R.layout.activity_photo);
 		// Show the Up button in the action bar.
 		setupActionBar();
+		
+		// Get the message from the intent
+	    Intent intent = getIntent();
+	    String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+	    // Create the text view
+	    TextView textView = new TextView(this);
+	    textView.setTextSize(40);
+	    textView.setText(message);
+
+	    // Set the text view as the activity layout
+	    setContentView(textView);
 	}
 
 	/**

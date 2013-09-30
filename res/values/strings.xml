@@ -4,7 +4,7 @@
     <string name="app_name">UNCC Photos</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_photos">Photos Activity</string>
+    <string name="title_activity_photo">Photos Activity</string>
 
     <string-array name="photo_urls">
         <item>http://farm8.staticflickr.com/7344/8730715795_49c6f7ca46.jpg</item>
@@ -39,6 +39,5 @@
     <string name="logoDescriptor">UNC Charlotte Logo</string>
     <string name="photosBtn">Photos</string>
     <string name="slideshowBtn">Slide Show</string>
-    <string name="title_activity_photo">PhotoActivity</string>
 
 </resources>
