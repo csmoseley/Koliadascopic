@@ -35,8 +35,10 @@
         <item>http://farm8.staticflickr.com/7305/9646446852_6e485f90a1.jpg</item>
         <item>http://farm9.staticflickr.com/8032/8043029022_06643dc31e.jpg</item>
     </string-array>
+
     <string name="logoDescriptor">UNC Charlotte Logo</string>
     <string name="photosBtn">Photos</string>
     <string name="slideshowBtn">Slide Show</string>
+    <string name="title_activity_photo">PhotoActivity</string>
 
 </resources>

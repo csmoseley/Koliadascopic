@@ -1,3 +1,7 @@
+
+
+
+
 package com.ITCS4180.photogallery;
 
 import android.app.Activity;
