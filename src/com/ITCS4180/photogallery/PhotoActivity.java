@@ -94,13 +94,6 @@ public class PhotoActivity extends Activity {
 			});
 		} else {
 
-			new Handler().postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					currentImage++;
-					new photoGet().execute();
-				}
-			}, 2000);
 		}
 	}
 
@@ -140,15 +133,6 @@ public class PhotoActivity extends Activity {
 			ImageView displayImg = (ImageView) findViewById(R.id.imageView1);
 			displayImg.setImageBitmap(result);
 			progressDialog.dismiss();
-			if (message.equals("Slideshow")) {
-				try {
-					Thread.sleep(2000);
-					new photoGet().execute();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 
 		}
 
