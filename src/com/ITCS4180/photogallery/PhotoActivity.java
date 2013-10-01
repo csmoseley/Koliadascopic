@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -28,6 +29,10 @@ public class PhotoActivity extends Activity {
 	int currentImage = 0;
 	String[] imageUrlArray = null;
 	String message = null;
+	boolean notfinished = true;
+	CountDownTimer cdt;
+	Bitmap bmp = null;
+	private Runnable runnable;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,9 @@ public class PhotoActivity extends Activity {
 		// Get the message from the intent
 		Intent intent = getIntent();
 		message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-		new photoGet().execute();
+		
 		if (message.equals("Photos")) {
+			new photoGet().execute();
 			Log.e("FanHitting", "This worked.");
 			ImageView imageObj = (ImageView) findViewById(R.id.imageView1);
 			imageObj.setOnTouchListener(new OnTouchListener() {
@@ -58,19 +64,18 @@ public class PhotoActivity extends Activity {
 							if ((hitX > .8) && (hitY < 1 && hitY > 0)) {
 								if (currentImage == (imageUrlArray.length - 1)) {
 									currentImage = 0;
-									new photoGet().execute();
 								} else {
 									currentImage++;
-									new photoGet().execute();
 								}
+								new photoGet().execute();
 							} else if ((hitX < .2) && (hitY < 1 && hitY > 0)) {
 								if (currentImage == 0) {
 									currentImage = imageUrlArray.length - 1;
-									new photoGet().execute();
+
 								} else {
 									currentImage--;
-									new photoGet().execute();
 								}
+								new photoGet().execute();
 							}
 						}
 						goodClick = false;
@@ -93,7 +98,7 @@ public class PhotoActivity extends Activity {
 				}
 			});
 		} else {
-
+			new photoGet().execute();
 		}
 	}
 
@@ -110,6 +115,11 @@ public class PhotoActivity extends Activity {
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
+			/*
+			 * if (message.equals("Slide Show")) { try { Thread.sleep(2000); }
+			 * catch (InterruptedException e) { // TODO Auto-generated catch
+			 * block e.printStackTrace(); } }
+			 */
 
 			URL url = null;
 			Bitmap bmp = null;
@@ -132,18 +142,33 @@ public class PhotoActivity extends Activity {
 			super.onPostExecute(result);
 			ImageView displayImg = (ImageView) findViewById(R.id.imageView1);
 			displayImg.setImageBitmap(result);
-			progressDialog.dismiss();
+			if (message.equals("Photos")) {
+				progressDialog.dismiss();
+			}else{
+				if (currentImage == (imageUrlArray.length - 1)) {
+					currentImage = 0;
+				} else {
+					currentImage++;
+				}
+				displayImg.postDelayed(new Runnable() {
+					@Override
+					public void run(){
+						new photoGet().execute();
+					}
+				}, 500);
+			}
 
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-
-			progressDialog = new ProgressDialog(PhotoActivity.this);
-			progressDialog.setMessage("Loading Image");
-			progressDialog.setCancelable(false);
-			progressDialog.show();
+			if (message.equals("Photos")) {
+				progressDialog = new ProgressDialog(PhotoActivity.this);
+				progressDialog.setMessage("Loading Image");
+				progressDialog.setCancelable(false);
+				progressDialog.show();
+			} 
 		}
 
 	}
