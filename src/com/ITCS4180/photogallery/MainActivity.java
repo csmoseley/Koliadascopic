@@ -15,17 +15,18 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	}
-	
-	public void launchGallery(View v){
+
+	public void launchGallery(View v) {
 		// Perform action on click
-		Intent intent = new Intent(this,
-				PhotoActivity.class);
+		Intent intent = new Intent(this, PhotoActivity.class);
 		Button photosBtnObj = (Button) findViewById(v.getId());
 		String message = photosBtnObj.getText().toString();
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);
 		
+		
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

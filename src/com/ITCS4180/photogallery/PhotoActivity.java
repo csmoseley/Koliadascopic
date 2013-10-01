@@ -1,33 +1,107 @@
 package com.ITCS4180.photogallery;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 
 public class PhotoActivity extends Activity {
+	Handler handler;
+	ProgressDialog progressDialog;
+	boolean goodClick = false;
+	int currentImage = 0;
+	String[] imageUrlArray = null;
+	String message = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
 		// Show the Up button in the action bar.
 		setupActionBar();
-		
+		imageUrlArray = getResources().getStringArray(R.array.photo_urls);
+
 		// Get the message from the intent
-	    Intent intent = getIntent();
-	    String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+		Intent intent = getIntent();
+		message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+		new photoGet().execute();
+		if (message.equals("Photos")) {
+			Log.e("FanHitting", "This worked.");
+			ImageView imageObj = (ImageView) findViewById(R.id.imageView1);
+			imageObj.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_UP:
 
-	    // Create the text view
-	    TextView textView = new TextView(this);
-	    textView.setTextSize(40);
-	    textView.setText(message);
+						if (goodClick) {
+							float hitX = event.getX() / v.getWidth();
+							float hitY = ((event.getY() - v.getTranslationY()) / v
+									.getHeight());
+							if ((hitX > .8) && (hitY < 1 && hitY > 0)) {
+								if (currentImage == (imageUrlArray.length - 1)) {
+									currentImage = 0;
+									new photoGet().execute();
+								} else {
+									currentImage++;
+									new photoGet().execute();
+								}
+							} else if ((hitX < .2) && (hitY < 1 && hitY > 0)) {
+								if (currentImage == 0) {
+									currentImage = imageUrlArray.length - 1;
+									new photoGet().execute();
+								} else {
+									currentImage--;
+									new photoGet().execute();
+								}
+							}
+						}
+						goodClick = false;
+						break;
+					case MotionEvent.ACTION_DOWN:
+						float hitX = event.getX() / v.getWidth();
+						float hitY = ((event.getY() - v.getTranslationY()) / v
+								.getHeight());
+						if ((hitX > .8) && (hitY < 1 && hitY > 0)) {
+							goodClick = true;
+						} else if ((hitX < .2) && (hitY < 1 && hitY > 0)) {
+							goodClick = true;
+						} else {
+							goodClick = false;
+						}
 
-	    // Set the text view as the activity layout
-	    setContentView(textView);
+					}
+
+					return true;
+				}
+			});
+		} else {
+
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					currentImage++;
+					new photoGet().execute();
+				}
+			}, 2000);
+		}
 	}
 
 	/**
@@ -36,6 +110,57 @@ public class PhotoActivity extends Activity {
 	private void setupActionBar() {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+
+	}
+
+	class photoGet extends AsyncTask<Void, Integer, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(Void... params) {
+
+			URL url = null;
+			Bitmap bmp = null;
+			try {
+				url = new URL(imageUrlArray[currentImage]);
+			} catch (MalformedURLException e) {
+				Log.e("FanHitting", "Bad Url in image array, or bad parsing");
+			}
+			try {
+				bmp = BitmapFactory.decodeStream(url.openConnection()
+						.getInputStream());
+			} catch (IOException e) {
+				Log.e("FanHitting", "imageParser blew up");
+			}
+			return bmp;
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			super.onPostExecute(result);
+			ImageView displayImg = (ImageView) findViewById(R.id.imageView1);
+			displayImg.setImageBitmap(result);
+			progressDialog.dismiss();
+			if (message.equals("Slideshow")) {
+				try {
+					Thread.sleep(2000);
+					new photoGet().execute();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			progressDialog = new ProgressDialog(PhotoActivity.this);
+			progressDialog.setMessage("Loading Image");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
 
 	}
 
@@ -62,5 +187,4 @@ public class PhotoActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 }
